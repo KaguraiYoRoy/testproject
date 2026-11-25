@@ -1,0 +1,28 @@
+CC := gcc
+CFLAGS := -Iinclude -Wall
+LIBDIR := lib
+SRCDIR := src
+INCDIR := include
+
+OBJ := $(LIBDIR)/add.o $(LIBDIR)/sub.o
+LIB := $(LIBDIR)/libcal.a
+TARGET := main-v1
+
+all: $(TARGET)
+
+$(LIBDIR):
+	mkdir -p $@
+
+$(LIBDIR)/%.o: $(SRCDIR)/%.c $(INCDIR)/%.h | $(LIBDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(LIB): $(OBJ)
+	ar rcs $@ $^
+
+$(TARGET): main.c $(LIB)
+	$(CC) $(CFLAGS) $< -L$(LIBDIR) -lcal -o $@
+
+clean:
+	rm -f $(OBJ) $(LIB) $(TARGET)
+
+.PHONY: all clean
